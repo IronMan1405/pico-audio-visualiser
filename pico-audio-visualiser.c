@@ -17,7 +17,7 @@ int main() {
     sh110x_clear(&oled);
 
     for (int i = 0; i < 64; i++) {
-        sh110x_draw_pixel(&oled, i, i, true);
+        sh110x_draw_pixel(&oled, 128-i, i, true);
     }
 
     sh110x_update(&oled);
