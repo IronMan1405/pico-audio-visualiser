@@ -26,8 +26,8 @@ int main() {
     sh110x_draw_line(&oled, 64, 63, 64, 0);
     sh110x_draw_line(&oled, 10, 50, 100, 20);
 
-    sh110x_draw_text(&oled, 0, 0, "FFT ONLINE");
-    sh110x_draw_text(&oled, 0, 10, "DRIVERS > SLEEP");
+    sh110x_draw_text(&oled, 5, 5, "FFT ONLINE", 1);
+    sh110x_draw_text(&oled, 5, 15, "DRIVERS > SLEEP", 1);
 
     sh110x_update(&oled);
 

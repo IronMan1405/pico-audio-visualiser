@@ -125,7 +125,7 @@ void sh110x_draw_line(sh110x_t *oled, int x0, int y0, int x1, int y1) {
     }
 }
 
-void sh110x_draw_char(sh110x_t *oled, int x, int y, char c) {
+void sh110x_draw_char(sh110x_t *oled, int x, int y, char c, uint8_t scale) {
     if (c < 32 || c > 127) {
         return;
     }
@@ -136,17 +136,21 @@ void sh110x_draw_char(sh110x_t *oled, int x, int y, char c) {
         int bits = glyph[col];
         for (int row = 0; row < 7; row++) {
             if (bits & ( 1<< row)){
-                sh110x_draw_pixel(oled, x + col, y + row, true);
+                for (int dx = 0; dx < scale; dx++) {
+                    for (int dy = 0; dy < scale; dy++) {
+                        sh110x_draw_pixel(oled, x + col, y + row, true);
+                    }
+                }
             }
         }
     }
 }
 
-void sh110x_draw_text(sh110x_t *oled, int x, int y, const char *text) {
+void sh110x_draw_text(sh110x_t *oled, int x, int y, const char *text, uint8_t scale) {
     int cursor_x = x;
     while (*text) {
-        sh110x_draw_char(oled, cursor_x, y, *text);
-        cursor_x += 6; // 5 pixels width and 1 pixel space
+        sh110x_draw_char(oled, cursor_x, y, *text, scale);
+        cursor_x += 6 * scale; // 5 pixels width and 1 pixel space
         text++;
     }
 }
