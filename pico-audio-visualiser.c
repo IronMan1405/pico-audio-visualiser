@@ -17,18 +17,20 @@ int main() {
     sh110x_clear(&oled);
 
     for (int i = 0; i < 64; i++) {
-        sh110x_draw_pixel(&oled, 128-i, i, true);
+        sh110x_draw_pixel(&oled, 128-i, 64-i, true);
     }
+
+    sh110x_draw_line(&oled, 0, 0, 127, 0);
+    sh110x_draw_line(&oled, 0, 0, 0, 63);
+    sh110x_draw_line(&oled, 0, 0, 127, 63);
+    sh110x_draw_line(&oled, 64, 63, 64, 0);
+    sh110x_draw_line(&oled, 10, 50, 100, 20);
+
+    sh110x_draw_text(&oled, 0, 0, "FFT ONLINE");
+    sh110x_draw_text(&oled, 0, 10, "DRIVERS > SLEEP");
 
     sh110x_update(&oled);
 
-    // printf("Scanning I2C bus...\n");
-    
-    // for (uint8_t addr = 1; addr < 127; addr++) {
-    //     if (i2c_write_blocking(i2c0, addr, NULL, 0, false) >= 0) {
-    //         printf("Found device at 0x%02X\n", addr);
-    //     }
-    // }
 
     while (1) tight_loop_contents();
 }

@@ -1,4 +1,5 @@
 #include "sh110x.h"
+#include "sh110x_font.h"
 #include "pico/stdlib.h"
 #include <string.h>
 
@@ -92,5 +93,60 @@ void sh110x_draw_pixel(sh110x_t *oled, int x, int y, bool on) {
         oled->buffer[index] |= mask;
     } else {
         oled->buffer[index] &= ~mask;
+    }
+}
+
+void sh110x_draw_line(sh110x_t *oled, int x0, int y0, int x1, int y1) {
+    int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
+    int dy = (y1 > y0) ? (y0 - y1) : (y1 - y0);
+
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+
+    int err = dx + dy;
+
+    while (1) {
+        sh110x_draw_pixel(oled, x0, y0, true);
+
+        if (x0 == x1 && y0 == y1) {
+            break;
+        }
+
+        int e2 = 2 * err;
+
+        if (e2 >= dy) {
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+void sh110x_draw_char(sh110x_t *oled, int x, int y, char c) {
+    if (c < 32 || c > 127) {
+        return;
+    }
+    
+    const uint8_t *glyph = font5x7[c-32];
+
+    for (int col = 0; col < 5; col++) {
+        int bits = glyph[col];
+        for (int row = 0; row < 7; row++) {
+            if (bits & ( 1<< row)){
+                sh110x_draw_pixel(oled, x + col, y + row, true);
+            }
+        }
+    }
+}
+
+void sh110x_draw_text(sh110x_t *oled, int x, int y, const char *text) {
+    int cursor_x = x;
+    while (*text) {
+        sh110x_draw_char(oled, cursor_x, y, *text);
+        cursor_x += 6; // 5 pixels width and 1 pixel space
+        text++;
     }
 }

@@ -22,5 +22,8 @@ void sh110x_clear(sh110x_t *oled);
 void sh110x_update(sh110x_t *oled);
 
 void sh110x_draw_pixel(sh110x_t *oled, int x, int y, bool on);
+void sh110x_draw_line(sh110x_t *oled, int x0, int y0, int x1, int y1);
+void sh110x_draw_char(sh110x_t *oled, int x, int y, char c);
+void sh110x_draw_text(sh110x_t *oled, int x, int y, const char *text);
 
 #endif
