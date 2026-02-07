@@ -39,6 +39,7 @@ add_executable(pico-audio-visualiser
     pico-audio-visualiser.c 
     drivers/oled/sh110x.c
     graphics/graph.c
+    fft/fft.c
 )
 
 pico_set_program_name(pico-audio-visualiser "pico-audio-visualiser")
@@ -47,6 +48,8 @@ pico_set_program_version(pico-audio-visualiser "0.1")
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_usb(pico-audio-visualiser 1)
 pico_enable_stdio_uart(pico-audio-visualiser 0)
+
+pico_generate_pio_header(pico-audio-visualiser ${CMAKE_CURRENT_LIST_DIR}/i2s_rx.pio)
 
 # Add the standard library to the build
 target_link_libraries(pico-audio-visualiser
@@ -57,13 +60,15 @@ target_include_directories(pico-audio-visualiser PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/drivers/oled
         ${CMAKE_CURRENT_LIST_DIR}/graphics
+        ${CMAKE_CURRENT_LIST_DIR}/fft
 )
 
 # Add any user requested libraries
 target_link_libraries(pico-audio-visualiser 
         hardware_i2c
         hardware_timer
-        
+        hardware_dma
+        hardware_pio
         )
 
 pico_add_extra_outputs(pico-audio-visualiser)
