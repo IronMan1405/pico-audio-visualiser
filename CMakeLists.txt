@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(pico-audio-visualiser 
     pico-audio-visualiser.c 
     drivers/oled/sh110x.c
+    graphics/graph.c
 )
 
 pico_set_program_name(pico-audio-visualiser "pico-audio-visualiser")
@@ -55,6 +56,7 @@ target_link_libraries(pico-audio-visualiser
 target_include_directories(pico-audio-visualiser PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/drivers/oled
+        ${CMAKE_CURRENT_LIST_DIR}/graphics
 )
 
 # Add any user requested libraries

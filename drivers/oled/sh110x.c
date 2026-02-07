@@ -154,3 +154,11 @@ void sh110x_draw_text(sh110x_t *oled, int x, int y, const char *text, uint8_t sc
         text++;
     }
 }
+
+void sh110x_fill_rect(sh110x_t *oled, int x, int y, int w, int h) {
+    for (int col = 0; col < w; col++) {
+        for (int row = 0; row < h; row++) {
+            sh110x_draw_pixel(oled, x + col, y + row, true);
+        }
+    }
+}
