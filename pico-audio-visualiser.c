@@ -17,9 +17,9 @@
 #define DATA 6
 
 // audio stuff
-#define SAMPLE_COUNT 4096
+#define SAMPLE_COUNT 1024
 #define GAIN 16
-#define ALPHA 0.2
+#define ALPHA 0.1
 
 uint32_t raw_buffer[2 * SAMPLE_COUNT];
 float hanning_table[SAMPLE_COUNT];
@@ -64,6 +64,9 @@ int main() {
     // main loop
     float wave[SAMPLE_COUNT];
     uint16_t mags[SAMPLE_COUNT];
+
+    float filt_prev = 0;
+    float reals[SAMPLE_COUNT], imags[SAMPLE_COUNT];
     while (1) {
         // read from sensor
         dma_channel_configure(
@@ -90,27 +93,30 @@ int main() {
         }
 
         float av = sum / SAMPLE_COUNT;
-        float _x = 0;
         // remove dc
         for (int i = 0; i < SAMPLE_COUNT; ++i) {
             wave[i] -= av;
             wave[i] *= GAIN;
 
             // apply low pass filtering (digital signal processing :fire:)
-            _x = ALPHA * wave[i] + (1 - ALPHA) * _x;
-            wave[i] = _x;
+            filt_prev = ALPHA * wave[i] + (1 - ALPHA) * filt_prev;
+            wave[i] = filt_prev;
+
+            // hanning window
+            wave[i] *= hanning_table[i];
         }
 
-        // hanning window
+        fft2(wave, SAMPLE_COUNT, reals, imags);
+
         for (int i = 0; i < SAMPLE_COUNT; ++i) {
-            wave[i] *= hanning_table[i];
+            wave[i] = 0.5 * sqrtf(reals[i] * reals[i] + imags[i] * imags[i]);
         }
 
         // display oled
         sh110x_clear(&oled);
 
         graph_draw_axes(&oled);
-        graph_draw_wave(&oled, wave, SAMPLE_COUNT);
+        graph_draw_wave(&oled, wave, SAMPLE_COUNT / 2);
 
         sh110x_update(&oled);
     }

@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-void fft2(double *x, size_t N, double *Xr, double *Xi) {
+void fft2(float *x, size_t N, float *Xr, float *Xi) {
     // 0. Precompute.
     size_t levels = 0;
     size_t n = N;
@@ -34,12 +34,12 @@ void fft2(double *x, size_t N, double *Xr, double *Xi) {
         size_t half_size = size / 2;
         for (size_t i = 0; i < N; i += size) {
             for (size_t k = 0; k < half_size; k++) {
-                // Compute twiddle factor.
-                double twiddle_r =  cos(2 * M_PI * k / (double) size);
-                double twiddle_i = -sin(2 * M_PI * k / (double) size);
+                // Compute twiddle factor. (Probably can precompute this as well.)
+                float twiddle_r =  cosf(2 * M_PI * k / (float) size);
+                float twiddle_i = -sinf(2 * M_PI * k / (float) size);
 
-                double qr = twiddle_r * Xr[i + k + half_size] - twiddle_i * Xi[i + k + half_size];
-                double qi = twiddle_r * Xi[i + k + half_size] + twiddle_i * Xr[i + k + half_size];
+                float qr = twiddle_r * Xr[i + k + half_size] - twiddle_i * Xi[i + k + half_size];
+                float qi = twiddle_r * Xi[i + k + half_size] + twiddle_i * Xr[i + k + half_size];
 
                 Xr[i + k + half_size] = Xr[i + k] - qr;
                 Xi[i + k + half_size] = Xi[i + k] - qi;

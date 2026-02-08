@@ -1,4 +1,4 @@
 #pragma once
 #include <stdlib.h>
 
-void fft2(double *x, size_t N, double *Xr, double *Xi);
+void fft2(float *x, size_t N, float *Xr, float *Xi);
