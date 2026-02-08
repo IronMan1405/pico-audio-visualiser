@@ -24,15 +24,17 @@ void graph_draw_fft(sh110x_t *oled, const uint16_t *fft_mag, int bins) {
     if (bar_w < 1) bar_w = 1;
 
     for (int i = 0; i < bins; i++) {
-        int h = (fft_mag[i] * GRAPH_HEIGHT) / bins;
-        printf("%d", h);
+        int h = fft_mag[i];
 
         if (h > GRAPH_HEIGHT) h = GRAPH_HEIGHT;
+        if (h < 0) h = 0;
 
         int x = GRAPH_X0 + i * bar_w;
         int y = GRAPH_Y1 - h;
 
-        sh110x_fill_rect(oled, x, y, bar_w - 1, h);
+        int w = bar_w > 1 ? bar_w - 1 : 1;
+
+        sh110x_fill_rect(oled, x, y, w, h);
     }
 }
 

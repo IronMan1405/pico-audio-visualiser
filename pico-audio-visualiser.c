@@ -63,10 +63,11 @@ int main() {
 
     // main loop
     float wave[SAMPLE_COUNT];
-    uint16_t mags[SAMPLE_COUNT];
 
     float filt_prev = 0;
     float reals[SAMPLE_COUNT], imags[SAMPLE_COUNT];
+
+    uint16_t bars[SAMPLE_COUNT / 2];
     while (1) {
         // read from sensor
         dma_channel_configure(
@@ -108,15 +109,34 @@ int main() {
 
         fft2(wave, SAMPLE_COUNT, reals, imags);
 
-        for (int i = 0; i < SAMPLE_COUNT; ++i) {
-            wave[i] = 0.5 * sqrtf(reals[i] * reals[i] + imags[i] * imags[i]);
+        // bar computation
+        int net_bins = SAMPLE_COUNT / 2;
+        int num_bars = 256;
+        int bins_per_bar = net_bins / num_bars;
+
+        for (int i = 0; i < num_bars; ++i) {
+            float max_power = 0;
+
+            for (int b = 0; b < bins_per_bar; ++b) {
+                int ffti = i * bins_per_bar + b;
+                if (ffti < 2) continue; // remove DC/noise
+
+                float power = reals[ffti] * reals[ffti] + imags[ffti] * imags[ffti];
+                if (power > max_power) max_power = power;
+            }
+
+            float db = 10.0f * log10f(max_power + 1e-6f);
+            int height = (int) (db + 0.f) * 2;
+            if (height < 0) height = 0;
+            if (height > 63) height = 63;
+            bars[i] = height;
         }
 
         // display oled
         sh110x_clear(&oled);
 
         graph_draw_axes(&oled);
-        graph_draw_wave(&oled, wave, SAMPLE_COUNT / 2);
+        graph_draw_fft(&oled, bars, num_bars);
 
         sh110x_update(&oled);
     }
