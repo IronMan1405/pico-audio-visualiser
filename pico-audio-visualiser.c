@@ -119,7 +119,6 @@ int main() {
 
             for (int b = 0; b < bins_per_bar; ++b) {
                 int ffti = i * bins_per_bar + b;
-                if (ffti < 2) continue; // remove DC/noise
 
                 float power = reals[ffti] * reals[ffti] + imags[ffti] * imags[ffti];
                 if (power > max_power) max_power = power;
