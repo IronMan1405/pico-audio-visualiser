@@ -100,8 +100,8 @@ int main() {
             wave[i] *= GAIN;
 
             // apply low pass filtering (digital signal processing :fire:)
-            filt_prev = ALPHA * wave[i] + (1 - ALPHA) * filt_prev;
-            wave[i] = filt_prev;
+            // filt_prev = ALPHA * wave[i] + (1 - ALPHA) * filt_prev;
+            // wave[i] = filt_prev;
 
             // hanning window
             wave[i] *= hanning_table[i];
@@ -110,15 +110,22 @@ int main() {
         fft2(wave, SAMPLE_COUNT, reals, imags);
 
         // bar computation
-        int net_bins = SAMPLE_COUNT / 2;
-        int num_bars = 256;
-        int bins_per_bar = net_bins / num_bars;
+        int net_bins = SAMPLE_COUNT / 2; //512
+        int start_bin = 2;
+        int end_bin = net_bins * 0.8; // 409.6
+        int usable_bins = end_bin - start_bin; // 407.6
+
+        int num_bars = 124;
+        
+        // int bins_per_bar = net_bins / num_bars;
+        int bins_per_bar = usable_bins / num_bars; // 12.73
 
         for (int i = 0; i < num_bars; ++i) {
             float max_power = 0;
 
             for (int b = 0; b < bins_per_bar; ++b) {
-                int ffti = i * bins_per_bar + b;
+                // int ffti = i * bins_per_bar + b;
+                int ffti = start_bin + i * bins_per_bar + b;
 
                 float power = reals[ffti] * reals[ffti] + imags[ffti] * imags[ffti];
                 if (power > max_power) max_power = power;

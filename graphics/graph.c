@@ -18,21 +18,18 @@ void graph_draw_axes(sh110x_t *oled) {
     sh110x_draw_line(oled, GRAPH_X0, GRAPH_Y1, GRAPH_X1, GRAPH_Y1);
 }
 
-void graph_draw_fft(sh110x_t *oled, const uint16_t *fft_mag, int bins) {
-    int bar_w = GRAPH_WIDTH / bins;
-
-    if (bar_w < 1) bar_w = 1;
-
-    for (int i = 0; i < bins; i++) {
+void graph_draw_fft(sh110x_t *oled, const uint16_t *fft_mag, int bars) {
+    for (int i = 0; i < bars; i++) {
         int h = fft_mag[i];
-
         if (h > GRAPH_HEIGHT) h = GRAPH_HEIGHT;
         if (h < 0) h = 0;
 
-        int x = GRAPH_X0 + i * bar_w;
-        int y = GRAPH_Y1 - h;
+        int x  = GRAPH_X0 + (i * (GRAPH_WIDTH + 1)) / bars;
+        int x2 = GRAPH_X0 + ((i + 1) * (GRAPH_WIDTH + 1)) / bars;
+        int w = x2 - x;
+        if (w < 1) w = 1;
 
-        int w = bar_w > 1 ? bar_w - 1 : 1;
+        int y = GRAPH_Y1 - h;
 
         sh110x_fill_rect(oled, x, y, w, h);
     }

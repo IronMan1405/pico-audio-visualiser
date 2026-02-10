@@ -99,7 +99,7 @@ static inline void i2s_rx_program_init(
 
     pio_sm_config c = i2s_rx_program_get_default_config(offset);
 
-    sm_config_set_clkdiv(&c, 6.0f);       // start here
+    sm_config_set_clkdiv(&c, 36.0f);       // start here
     sm_config_set_sideset_pins(&c, bclk_pin);
     sm_config_set_out_pins(&c, ws_pin, 1);
     sm_config_set_in_pins(&c, data_pin);
